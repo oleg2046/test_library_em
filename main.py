@@ -13,9 +13,8 @@ class Book:
 
     def __str__(self):
         return '{0:^10}|{1:^25}|{2:^25}|{3:^14}|{4:^14}'.format(self.id, self.title, self.author, self.year, self.status) + '\n' + '-' * 90
-        #return f"ID: {self.id}, Название: {self.title}, Автор: {self.author}, Год издания: {self.year}, Статус: {self.status}"
 
-    def to_dict(self):
+    def to_dict(self):        # метод формирующий словарь подходящий под json условия
         return {
             "id": self.id,
             "title": self.title,
@@ -34,24 +33,24 @@ class Library:
         self.db_path = db_path
         self.books = self.load_books()
 
-    def load_books(self):
+    def load_books(self):        # метод загрузки книг из библиотеки
         if os.path.exists(self.db_path):
             with open(self.db_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
                 return [Book.from_dict(book) for book in data]
         return []
 
-    def save_books(self):
+    def save_books(self):        # метод сохранения книги в файл library.json
         with open(self.db_path, 'w', encoding='utf-8') as f:
             json.dump([book.to_dict() for book in self.books], f, ensure_ascii=False, indent=4)
 
-    def add_book(self, title, author, year):
+    def add_book(self, title, author, year):        # метод добавления книги в файл library.json
         book = Book(title, author, year)
         self.books.append(book)
         self.save_books()
         print("Книга добавлена!")
 
-    def delete_book(self, book_id):
+    def delete_book(self, book_id):        # метод удаления книги из файла library.json
         for book in self.books:
             if book.id == book_id:
                 self.books.remove(book)
@@ -60,14 +59,14 @@ class Library:
                 return
         print("Книга с указанным ID не найдена.")
 
-    def find_book(self, book_id):
+    def find_book(self, *args):
         for book in self.books:
-            if book.id == book_id:
+            if book.title in args or book.author in args or book.year in args:
                 print(book)
                 return
-        print("Книга с указанным ID не найдена.")
+        print("Книга с указанными данными не найдена.")
 
-    def display_books(self):
+    def display_books(self):        # метод отображения всех книг библиотеки
         if not self.books:
             print("Библиотека пуста.")
         else:
@@ -75,7 +74,7 @@ class Library:
             for book in self.books:
                 print(book)
 
-    def change_status(self, book_id, status):
+    def change_status(self, book_id, status):        # метод статуса книг
         for book in self.books:
             if book.id == book_id:
                 if status in ["в наличии", "выдана"]:
@@ -110,8 +109,8 @@ def main():
             book_id = input("Введите ID книги для удаления: ")
             library.delete_book(book_id)
         elif choice == "3":
-            book_id = input("Введите ID книги для поиска: ")
-            library.find_book(book_id)
+            n = input("Введите название, автора или год книги для поиска: ")
+            library.find_book(n)
         elif choice == "4":
             library.display_books()
         elif choice == "5":
