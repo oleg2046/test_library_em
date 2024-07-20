@@ -22,7 +22,9 @@ python main.py
 ## Структура проекта
 
 test_library_em/
+
 ├── main.py
+
 └── library.json
 
 - `main.py`: Основной скрипт приложения.
